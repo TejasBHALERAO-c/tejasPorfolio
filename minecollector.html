@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mine Collector</title>
+  <style>
+    body {
+      margin: 0;
+      overflow: hidden;
+      background: #111;
+      font-family: 'Segoe UI', sans-serif;
+    }
+
+    canvas {
+      display: block;
+    }
+
+    /* Menus */
+    #startMenu,
+    #gameOverMenu,
+    #pauseMenu {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.85);
+      color: white;
+      padding: 25px;
+      border-radius: 15px;
+      display: none;
+      text-align: center;
+      width: 300px;
+    }
+
+    #startMenu.show,
+    #gameOverMenu.show,
+    #pauseMenu.show {
+      display: block;
+    }
+
+    button {
+      margin: 10px;
+      padding: 12px 25px;
+      font-size: 18px;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      background: linear-gradient(to right, #ff416c, #ff4b2b);
+      color: white;
+      transition: transform 0.2s, background 0.3s;
+    }
+
+    button:hover {
+      transform: scale(1.1);
+    }
+
+    /* Countdown */
+    #countdown {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 90px;
+      font-weight: bold;
+      color: yellow;
+      display: none;
+      text-shadow: 2px 2px 8px black;
+    }
+
+    /* Floating Pause Button */
+    #pauseButton {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      font-size: 22px;
+      padding: 12px 18px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      display: none;
+    }
+
+    /* HUD */
+    #hud {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 20px;
+      color: white;
+      text-shadow: 2px 2px 5px black;
+      display: none;
+    }
+  </style>
+</head>
+
+<body>
+  <canvas id="gameCanvas"></canvas>
+  <!-- Start Menu -->
+  <div id="startMenu" class="show">
+    <h1>Mine Collector</h1>
+    <button onclick="startGame()">Play</button>
+    <a href="portfolio.html"><button onclick="exitGame()">Exit</button></a>
+  </div>
+  <!-- Game Over Menu -->
+  <div id="gameOverMenu">
+    <h1>Game Over!</h1>
+    <p id="finalScore"></p>
+    <button onclick="restartGame()">Restart</button>
+   <a href="portfolio.html"> <button onclick="exitGame()">Exit</button></a>
+  </div>
+  <!-- Pause Menu -->
+  <div id="pauseMenu">
+    <h1>Paused</h1>
+    <button onclick="resumeGame()">Continue</button>
+    <button onclick="restartGame()">Restart</button>
+    <button onclick="exitGame()">Exit</button>
+  </div>
+  <!-- Countdown -->
+  <div id="countdown"></div>
+  <!-- Floating Pause Button -->
+  <button id="pauseButton" onclick="togglePause()">⏸</button>
+  <!-- HUD -->
+  <div id="hud">💰 Gold: 0 | 💎 Diamonds: 0</div>
+
+  <script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+    const countdownEl = document.getElementById("countdown");
+    const startMenu = document.getElementById("startMenu");
+    const gameOverMenu = document.getElementById("gameOverMenu");
+    const pauseMenu = document.getElementById("pauseMenu");
+    const hud = document.getElementById("hud");
+    const pauseButton = document.getElementById("pauseButton");
+
+    function resizeCanvas() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      groundY = canvas.height - 100;
+      car.y = groundY - car.height;
+    }
+    window.addEventListener("resize", resizeCanvas);
+
+    // Game variables
+    let groundY = 0;
+    let car = { x: 100, y: 0, width: 60, height: 70 };
+    let obstacles = [];
+    let coins = [];
+    let gold = 0;
+    let diamonds = 0;
+    let gameOver = false;
+    let paused = false;
+    let started = false;
+    let obstacleSpeed = 5;
+    let roadScroll = 0;
+    resizeCanvas();
+
+    // Controls
+    let leftPressed = false, rightPressed = false;
+    window.addEventListener("keydown", e => {
+      if (e.key === "ArrowLeft") leftPressed = true;
+      if (e.key === "ArrowRight") rightPressed = true;
+      if (e.key === "Escape") togglePause();
+    });
+    window.addEventListener("keyup", e => {
+      if (e.key === "ArrowLeft") leftPressed = false;
+      if (e.key === "ArrowRight") rightPressed = false;
+    });
+
+    // Touch
+    canvas.addEventListener("touchstart", e => {
+      const touchX = e.touches[0].clientX;
+      if (touchX < canvas.width / 2) leftPressed = true;
+      else rightPressed = true;
+    });
+    canvas.addEventListener("touchend", () => {
+      leftPressed = false; rightPressed = false;
+    });
+
+    // 🔹 Rocks storage
+    let rocks = [];
+    function spawnRocks() {
+      if (!gameOver && !paused && started) {
+        for (let i = 0; i < 3; i++) {
+          rocks.push({
+            x: Math.random() * canvas.width,
+            y: -10,
+            radius: Math.random() * 4 + 3,
+            speed: Math.random() * 2 + 1
+          });
+        }
+      }
+    }
+
+    function drawRocks() {
+      rocks.forEach((rock, i) => {
+        rock.y += rock.speed * (obstacleSpeed * 0.3);
+        ctx.fillStyle = "rgba(180,180,180,0.8)";
+        ctx.beginPath();
+        ctx.arc(rock.x, rock.y, rock.radius, 0, Math.PI * 2);
+        ctx.fill();
+        if (rock.y > canvas.height) rocks.splice(i, 1);
+      });
+    }
+    setInterval(spawnRocks, 300);
+
+    // Game loop
+    function gameLoop() {
+      if (gameOver || paused || !started) return;
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Background road
+      ctx.fillStyle = "#333";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // 🔹 Falling rocks
+      drawRocks();
+
+      // ground (mine ground)
+      let mineGradient = ctx.createLinearGradient(0, groundY, 0, canvas.height);
+      mineGradient.addColorStop(0, "#4b3621");
+      mineGradient.addColorStop(1, "#2d2216");
+      ctx.fillStyle = mineGradient;
+      ctx.fillRect(0, groundY, canvas.width, canvas.height - groundY);
+
+
+      // cracks
+      ctx.strokeStyle = "#222";
+      ctx.lineWidth = 2;
+      for (let i = 0; i < canvas.width; i += 80) {
+        ctx.beginPath();
+        ctx.moveTo(i, groundY + Math.random() * 80);
+        ctx.lineTo(i + 40, groundY + 100);
+        ctx.stroke();
+      }
+
+      // Car
+      if (leftPressed) car.x -= 8;
+      if (rightPressed) car.x += 8;
+      if (car.x < 0) car.x = 0;
+      if (car.x + car.width > canvas.width) car.x = canvas.width - car.width;
+
+      ctx.fillStyle = "red";
+      ctx.fillRect(car.x, car.y + 10, car.width, car.height - 20);
+
+      ctx.fillStyle = "#cc0000";
+      ctx.beginPath();
+      ctx.moveTo(car.x + 10, car.y + 10);
+      ctx.lineTo(car.x + car.width - 10, car.y + 10);
+      ctx.lineTo(car.x + car.width - 20, car.y);
+      ctx.lineTo(car.x + 20, car.y);
+      ctx.closePath();
+      ctx.fill();
+
+      ctx.fillStyle = "black";
+      ctx.beginPath();
+      ctx.arc(car.x + 15, car.y + car.height - 5, 10, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.beginPath();
+      ctx.arc(car.x + car.width - 15, car.y + car.height - 5, 10, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Obstacles
+      obstacles.forEach((ob, i) => {
+        ob.y += obstacleSpeed - 1;
+        ctx.shadowColor = "rgba(0,0,0,0.6)";
+        ctx.shadowBlur = 10;
+        ctx.shadowOffsetX = 4;
+        ctx.shadowOffsetY = 4;
+        ctx.fillStyle = "gray";
+        ctx.fillRect(ob.x, ob.y, ob.width, ob.height);
+
+        ctx.shadowColor = "transparent";
+        ctx.shadowBlur = 0;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 0;
+
+        ctx.fillStyle = "yellow";
+        ctx.fillRect(ob.x, ob.y + ob.height / 3, ob.width, 5);
+        ctx.fillRect(ob.x, ob.y + (2 * ob.height / 3), ob.width, 5);
+
+        if (ob.y > canvas.height) obstacles.splice(i, 1);
+        if (isColliding(car, ob)) endGame();
+      });
+
+      // Coins
+      coins.forEach((coin, i) => {
+        coin.y += obstacleSpeed - 0.2;
+        if (coin.type === "gold") {
+          let gradient = ctx.createRadialGradient(coin.x, coin.y, 5, coin.x, coin.y, coin.radius);
+          gradient.addColorStop(0, "yellow");
+          gradient.addColorStop(0.3, "orange");
+          gradient.addColorStop(1, "gold");
+          ctx.fillStyle = gradient;
+          ctx.beginPath();
+          ctx.arc(coin.x, coin.y, coin.radius, 0, Math.PI * 2);
+          ctx.fill();
+        } else {
+          ctx.fillStyle = "cyan";
+          ctx.shadowBlur = 15;
+          ctx.shadowColor = "aqua";
+          ctx.beginPath();
+          ctx.moveTo(coin.x, coin.y - coin.radius);
+          ctx.lineTo(coin.x + coin.radius, coin.y);
+          ctx.lineTo(coin.x, coin.y + coin.radius);
+          ctx.lineTo(coin.x - coin.radius, coin.y);
+          ctx.closePath();
+          ctx.fill();
+          ctx.shadowBlur = 0;
+        }
+        if (coin.y > canvas.height) coins.splice(i, 1);
+        if (isCollidingCircle(car, coin)) {
+          if (coin.type === "gold") gold += 1;
+          else diamonds += 5;
+          coins.splice(i, 1);
+        }
+      });
+
+      hud.textContent = `💰 Gold: ${gold} | 💎 Diamonds: ${diamonds}`;
+      requestAnimationFrame(gameLoop);
+    }
+
+    // Spawner
+    setInterval(() => {
+      if (!gameOver && !paused && started) {
+        let r = Math.random();
+        if (r < 0.5) {
+          obstacles.push({ x: Math.random() * (canvas.width - 50), y: -50, width: 50, height: 50 });
+        } else if (r < 0.8) {
+          coins.push({ x: Math.random() * (canvas.width - 20), y: -20, radius: 12, type: "gold" });
+        } else {
+          coins.push({ x: Math.random() * (canvas.width - 20), y: -20, radius: 15, type: "diamond" });
+        }
+      }
+    }, 1200);
+
+    // Collision helpers
+    function isColliding(a, b) {
+      return a.x < b.x + b.width && a.x + a.width > b.x &&
+        a.y < b.y + b.height && a.y + a.height > b.y;
+    }
+    function isCollidingCircle(rect, circle) {
+      let distX = Math.abs(circle.x - rect.x - rect.width / 2);
+      let distY = Math.abs(circle.y - rect.y - rect.height / 2);
+      if (distX > (rect.width / 2 + circle.radius)) return false;
+      if (distY > (rect.height / 2 + circle.radius)) return false;
+      if (distX <= (rect.width / 2)) return true;
+      if (distY <= (rect.height / 2)) return true;
+      let dx = distX - rect.width / 2;
+      let dy = distY - rect.height / 2;
+      return (dx * dx + dy * dy <= (circle.radius * circle.radius));
+    }
+
+    // Game control
+    function endGame() {
+      gameOver = true;
+      document.getElementById("finalScore").textContent =
+        "💰 Gold: " + gold + " | 💎 Diamonds: " + diamonds;
+      gameOverMenu.classList.add("show");
+      pauseButton.style.display = "none";
+      hud.style.display = "none";
+    }
+    function restartGame() {
+      gameOver = false;
+      paused = false;
+      obstacles = [];
+      coins = [];
+      gold = 0;
+      diamonds = 0;
+      car.x = 100;
+      car.y = groundY - car.height;
+      gameOverMenu.classList.remove("show");
+      pauseMenu.classList.remove("show");
+      hud.style.display = "block";
+      pauseButton.style.display = "block";
+      startCountdown(() => requestAnimationFrame(gameLoop));
+    }
+    function startGame() {
+      startMenu.classList.remove("show");
+      started = true;
+      restartGame();
+    }
+    function togglePause() {
+      if (!gameOver && started) {
+        paused = !paused;
+        if (paused) pauseMenu.classList.add("show");
+        else {
+          pauseMenu.classList.remove("show");
+          startCountdown(() => requestAnimationFrame(gameLoop));
+        }
+      }
+    }
+    function resumeGame() {
+      paused = false;
+      pauseMenu.classList.remove("show");
+      startCountdown(() => requestAnimationFrame(gameLoop));
+    }
+    function exitGame() {
+      location.reload();
+    }
+
+    // Countdown
+    function startCountdown(callback) {
+      let count = 3;
+      countdownEl.style.display = "block";
+      countdownEl.textContent = count;
+      let interval = setInterval(() => {
+        count--;
+        if (count > 0) countdownEl.textContent = count;
+        else {
+          clearInterval(interval);
+          countdownEl.style.display = "none";
+          callback();
+        }
+      }, 1000);
+    }
+  </script>
+   <script type='text/javascript' src='//pl27657443.revenuecpmgate.com/9e/63/97/9e639750b74bc3f7a2f845413ac84401.js'></script>
+</body>
+
+</html>

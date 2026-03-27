@@ -1,0 +1,1001 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teja Bhalerao | Freelance Developer</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --primary: #ffcc70;
+      --secondary: #ff884b;
+      --bg-dark: #0f0c29;
+      --bg-mid: #302b63;
+      --bg-light: #24243e;
+      --text-main: #ffffff;
+      --text-muted: #b0aecf;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: "Outfit", sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, var(--bg-dark), var(--bg-mid), var(--bg-light));
+      background-size: 400% 400%;
+      animation: gradientBG 10s ease infinite;
+      color: var(--text-main);
+      overflow-x: hidden;
+      perspective: 1000px;
+    }
+
+    @keyframes gradientBG {
+      0% {
+        background-position: 0% 50%;
+      }
+
+      50% {
+        background-position: 100% 50%;
+      }
+
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    /* Floating Background Particles */
+    .bg-particles {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+      overflow: hidden;
+    }
+
+    .particle {
+      position: absolute;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(255, 204, 112, 0.4) 0%, rgba(255, 204, 112, 0) 70%);
+      animation: floatParticle 20s infinite linear;
+      filter: blur(30px);
+    }
+
+    .p1 {
+      width: 300px;
+      height: 300px;
+      top: -100px;
+      left: -100px;
+      animation-duration: 25s;
+    }
+
+    .p2 {
+      width: 400px;
+      height: 400px;
+      bottom: -150px;
+      right: -100px;
+      background: radial-gradient(circle, rgba(255, 136, 75, 0.3) 0%, rgba(255, 136, 75, 0) 70%);
+      animation-duration: 30s;
+      animation-direction: reverse;
+    }
+
+    .p3 {
+      width: 250px;
+      height: 250px;
+      top: 40%;
+      left: 60%;
+      background: radial-gradient(circle, rgba(120, 80, 255, 0.3) 0%, rgba(120, 80, 255, 0) 70%);
+      animation-duration: 20s;
+    }
+
+    @keyframes floatParticle {
+      0% {
+        transform: translateY(0) translateX(0) rotate(0deg) scale(1);
+      }
+
+      33% {
+        transform: translateY(-50px) translateX(30px) rotate(120deg) scale(1.1);
+      }
+
+      66% {
+        transform: translateY(30px) translateX(-40px) rotate(240deg) scale(0.9);
+      }
+
+      100% {
+        transform: translateY(0) translateX(0) rotate(360deg) scale(1);
+      }
+    }
+
+    /* ===== NAVBAR ===== */
+    nav {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 80px;
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      transition: all 0.4s ease;
+      transform-style: preserve-3d;
+    }
+
+    nav .logo {
+      font-size: 2rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0px 5px 15px rgba(255, 204, 112, 0.2);
+      transform: translateZ(20px);
+    }
+
+    nav ul {
+      display: flex;
+      gap: 40px;
+      list-style: none;
+    }
+
+    nav ul li a {
+      text-decoration: none;
+      color: var(--text-main);
+      transition: all 0.3s ease;
+      font-weight: 600;
+      position: relative;
+      display: inline-block;
+    }
+
+    nav ul li a::after {
+      content: '';
+      position: absolute;
+      width: 0;
+      height: 2px;
+      bottom: -4px;
+      left: 0;
+      background: var(--primary);
+      transition: width 0.3s ease;
+      box-shadow: 0 0 10px var(--primary);
+    }
+
+    nav ul li a:hover {
+      color: var(--primary);
+      transform: translateY(-2px) scale(1.05);
+      text-shadow: 0 0 10px rgba(255, 204, 112, 0.5);
+    }
+
+    nav ul li a:hover::after {
+      width: 100%;
+    }
+
+    /* ===== PROFILE EYES SECTION (3D Enhancements) ===== */
+    .profile {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      transform-style: preserve-3d;
+      transition: transform 0.5s ease;
+    }
+
+    .profile:hover {
+      transform: scale(1.05) translateZ(30px);
+    }
+
+    .face {
+      display: flex;
+      justify-content: space-around;
+      margin-left: 15px;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.05);
+      padding: 10px 15px;
+      border-radius: 40px;
+      box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.1), 0 5px 15px rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .eye {
+      height: 40px;
+      width: 40px;
+      background: radial-gradient(circle at 60% 40%, #ffffff 0%, #d4d4d4 60%, #9e9e9e 100%);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      box-shadow: inset -3px -3px 8px rgba(0, 0, 0, 0.2), 0 4px 10px rgba(0, 0, 0, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .eye::after {
+      content: '';
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      width: 8px;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.8);
+      border-radius: 50%;
+      box-shadow: 0 0 5px rgba(255, 255, 255, 0.9);
+      pointer-events: none;
+    }
+
+    .pupil {
+      height: 18px;
+      width: 18px;
+      background: radial-gradient(circle at 30% 30%, #333 0%, #000 70%);
+      border-radius: 50%;
+      transition: transform 0.1s cubic-bezier(0.2, 0, 0.2, 1);
+      box-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+    }
+    /* .pupil:hover{
+      transform: matrix(30px,50px);
+      transition: 1.5s all ease-in-out;
+    } */
+
+    .eyelid {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 0;
+      background-color: var(--bg-dark);
+      border-radius: 50%;
+      transition: height 0.15s ease-in-out;
+      z-index: 2;
+    }
+
+    /* ===== HERO SECTION ===== */
+    .hero {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      align-items: center;
+      min-height: calc(100vh - 80px);
+      padding: 0 10%;
+      position: relative;
+      transform-style: preserve-3d;
+    }
+
+    .intro {
+      flex: 1;
+      min-width: 320px;
+      z-index: 10;
+      transform-style: preserve-3d;
+      perspective: 1000px;
+      animation: fadeInUp 1.5s cubic-bezier(0.2, 0.8, 0.2, 1);
+    }
+
+    .intro h1 {
+      font-size: 5rem;
+      margin-bottom: 20px;
+      line-height: 1.1;
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff, var(--primary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      transform: translateZ(50px);
+      text-shadow: 0 20px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    .intro p {
+      font-size: 1.25rem;
+      line-height: 1.8;
+      color: var(--text-muted);
+      margin-bottom: 30px;
+      max-width: 600px;
+      transform: translateZ(30px);
+    }
+
+    .intro p b {
+      color: var(--primary);
+      display: block;
+      margin-top: 15px;
+      font-size: 1.4rem;
+      font-weight: 600;
+      text-shadow: 0 0 20px rgba(255, 204, 112, 0.3);
+    }
+
+    .hero-btn {
+      padding: 15px 40px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--bg-dark);
+      transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      box-shadow: 0 10px 20px rgba(255, 136, 75, 0.3), inset 0 -3px 0 rgba(0, 0, 0, 0.2);
+      transform: translateZ(40px);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+      transition: left 0.5s ease;
+    }
+
+    .hero-btn:hover {
+      transform: scale(1.1) translateY(-5px) translateZ(60px);
+      box-shadow: 0 20px 40px rgba(255, 204, 112, 0.5), inset 0 -3px 0 rgba(0, 0, 0, 0.1);
+    }
+
+    .hero-btn:hover::before {
+      left: 100%;
+    }
+
+    /* Floating 3D Graphic */
+    .hero-graphic {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-width: 320px;
+      position: relative;
+      /* transform-style: preserve-3d; */
+    }
+
+    .hero-graphic .cube {
+      width: 300px;
+      height: 300px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      /* transform-style: preserve-3d; */
+      transform: rotateX(15deg) rotateY(15deg);
+      transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+      position: relative;
+    }
+
+    /* HUD Elements */
+    .hud-center {
+      width: 50px;
+      height: 50px;
+      background: #00f2ff;
+      border-radius: 50%;
+      box-shadow: 0 0 40px #00f2ff, 0 0 80px rgba(0, 242, 255, 0.5);
+      animation: hudPulse 2.5s infinite ease-in-out;
+      z-index: 10;
+    }
+
+    .hud-ring {
+      position: absolute;
+      border: 2px solid rgba(0, 242, 255, 0.3);
+      border-radius: 50%;
+      transform-style: preserve-3d;
+    }
+
+    .ring-1 {
+      width: 120px;
+      height: 120px;
+      border-style: dashed;
+      border-width: 4px;
+      animation: rotateCW 12s linear infinite;
+    }
+
+    .ring-2 {
+      width: 200px;
+      height: 200px;
+      border: 3px solid transparent;
+      border-top-color: #00f2ff;
+      border-bottom-color: #00f2ff;
+      animation: rotateCCW 18s linear infinite;
+    }
+
+    .ring-2::after {
+      content: '';
+      position: absolute;
+      top: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 20px;
+      height: 20px;
+      background: #00f2ff;
+      border-radius: 50%;
+      box-shadow: 0 0 25px #00f2ff;
+    }
+
+    .ring-3 {
+      width: 280px;
+      height: 280px;
+      border: 10px double transparent;
+      border-left-color: rgba(0, 242, 255, 0.6);
+      border-right-color: rgba(0, 242, 255, 0.6);
+      animation: rotateCW 25s linear infinite;
+    }
+
+    /* Animations */
+    @keyframes rotateCW {
+      from {
+        transform: rotate(0deg);
+      }
+
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    @keyframes rotateCCW {
+      from {
+        transform: rotate(360deg);
+      }
+
+      to {
+        transform: rotate(0deg);
+      }
+    }
+
+    @keyframes hudPulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+        opacity: 0.8;
+      }
+
+      50% {
+        transform: scale(1.15);
+        opacity: 1;
+      }
+    }
+
+    .hero-graphic .cube:hover .hud-center {
+      box-shadow: 0 0 60px #00f2ff, 0 0 120px rgba(0, 242, 255, 0.9);
+    }
+
+    /* Removed floatGraphic animation */
+
+
+    /* ===== PROJECTS SECTION ===== */
+    .projects {
+      text-align: center;
+      padding: 100px 10%;
+      background: transparent;
+      position: relative;
+      z-index: 10;
+    }
+
+    .projects h2 {
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin-bottom: 60px;
+      position: relative;
+      display: inline-block;
+    }
+
+    .projects h2::after {
+      content: '';
+      position: absolute;
+      width: 60%;
+      height: 4px;
+      background: linear-gradient(90deg, transparent, var(--primary), transparent);
+      bottom: -10px;
+      left: 20%;
+      border-radius: 2px;
+      box-shadow: 0 0 10px var(--primary);
+    }
+
+    .cards {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content:space-around;
+      gap: 40px;
+      perspective: 1500px;
+    }
+
+    .card {
+      background: rgba(255, 255, 255, 0.03);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 25px;
+      width: 320px;
+      padding: 0;
+      /* Move padding to link for full-card clickability */
+      text-align: left;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+      transform-style: preserve-3d;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Internal Card Elements (3D Pop-out) */
+    .card h3 {
+      font-size: 1.6rem;
+      color: var(--primary);
+      margin-bottom: 15px;
+      transform: translateZ(50px);
+      text-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+    }
+
+    .card p {
+      color: var(--text-muted);
+      font-size: 1rem;
+      line-height: 1.6;
+      transform: translateZ(30px);
+    }
+
+    .card a {
+      display: block;
+      padding: 40px 30px;
+      text-decoration: none;
+      color: inherit;
+      height: 100%;
+      width: 100%;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 5px;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+
+    .card:hover::before {
+      opacity: 1;
+    }
+
+    /* ===== STATS SECTION ===== */
+    .stats {
+      padding: 60px 10%;
+      display: flex;
+      justify-content: center;
+      gap: 60px;
+      flex-wrap: wrap;
+      background: rgba(255, 255, 255, 0.02);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      margin-top: 50px;
+    }
+
+    .stat-item {
+      text-align: center;
+      min-width: 150px;
+      transform-style: preserve-3d;
+      transition: transform 0.3s ease;
+    }
+
+    .stat-item:hover {
+      transform: translateY(-10px) scale(1.1);
+    }
+
+    .stat-number {
+      font-size: 3.5rem;
+      font-weight: 800;
+      background: linear-gradient(90deg, var(--primary), var(--secondary));
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: block;
+      margin-bottom: 5px;
+      text-shadow: 0 10px 20px rgba(255, 204, 112, 0.2);
+    }
+
+    .stat-label {
+      font-size: 1rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 600;
+    }
+
+    /* ===== FOOTER ===== */
+    footer {
+      text-align: center;
+      padding: 30px;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(10px);
+      font-size: 1rem;
+      color: var(--text-muted);
+      border-top: 1px solid rgba(255, 255, 255, 0.05);
+      position: relative;
+      z-index: 10;
+    }
+
+    footer a {
+      color: var(--primary);
+      text-decoration: none;
+      font-weight: 600;
+      transition: text-shadow 0.3s ease;
+    }
+
+    footer a:hover {
+      text-shadow: 0 0 10px var(--primary);
+    }
+
+    /* Animations */
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(40px) translateZ(-50px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0) translateZ(0);
+      }
+    }
+
+    @media (max-width: 900px) {
+      nav {
+        flex-direction: column;
+        gap: 15px;
+        padding: 20px;
+      }
+
+      .hero {
+        padding: 40px 5%;
+        text-align: center;
+      }
+
+      .hero-graphic {
+        display: none;
+        /* Hide graphic on small screens to save space */
+      }
+
+      .intro h1 {
+        font-size: 3.5rem;
+      }
+    }
+
+
+
+
+  #contact {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      transform: translateY(15px) rotateY(90deg) scale(0);
+      background: rgba(5, 5, 10, 0.95);
+      color: white;
+      padding: 24px 30px;
+      border-radius: 16px;
+      opacity: 0;
+      z-index: 1500;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      width: min(360px, calc(100vw - 40px));
+      transition: transform 0.45s ease, opacity 0.45s ease;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(8px);
+    }
+
+    #contact h2 {
+      color: var(--primary);
+      font-size: 1.7rem;
+      margin-bottom: 12px;
+      text-align: left;
+      width: 100%;
+    }
+
+    #contact a {
+      color: var(--text-main);
+      text-decoration: none;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin: 6px 0;
+      transition: all 0.2s ease;
+      word-wrap: break-word;
+      width: 100%;
+    }
+
+    #contact a:hover {
+      color: var(--primary);
+      text-shadow: 0 0 15px var(--primary);
+      transform: scale(1.05);
+    }
+
+
+   #contact.show{
+    opacity: 1;
+    transform: translateY(0) rotateY(0deg) scale(1);
+   }
+  </style>
+</head>
+
+<body>
+
+  <!-- Floating Particles Background -->
+  <div class="bg-particles">
+    <div class="particle p1"></div>
+    <div class="particle p2"></div>
+    <div class="particle p3"></div>
+  </div>
+
+  <!-- ===== NAVIGATION ===== -->
+  <nav>
+    <div class="profile">
+      
+      <div class="logo">Tejas Bhalerao</div>
+      <button id="btn" style="background:transparent;border: none;outline: none;">
+      <div class="face">
+        <div class="eye">
+          <div class="pupil"></div>
+          <div class="eyelid"></div>
+        </div>
+        <div class="eye">
+          <div class="pupil"></div>
+          <div class="eyelid"></div>
+        </div>
+      </div>
+      </button>
+    </div>
+    <ul>
+      <li><a href="#">Home</a></li>
+      <li><a href="#projects">Projects</a></li>
+      <li><a href="#contact" onclick="toggel()">Contact</a></li>
+    </ul>
+    
+
+  </nav>
+
+  <!-- ===== HERO SECTION ===== -->
+  <section class="hero" style="margin-top: 70px;">
+    <div class="intro">
+      <h1>Hi, I’m Tejas 👋</h1>
+      <p>
+        I am a third-year BCA student with knowledge in C, C++, Advanced Java, MySQL, HTML, CSS, JavaScript, PHP, and
+        Python.
+        I deeply enjoy learning new technologies and crafting projects that seamlessly combine creativity and logic.
+        My hobbies include drawing, painting, sketching, and developing dynamic games using Unity Engine or JS.
+        <b>I believe creativity and logic together make the best innovations.</b>
+      </p>
+      <button class="hero-btn">Follow Me</button>
+    </div>
+
+    <div class="hero-graphic">
+      <div class="cube" id="hero-cube">
+        <div class="hud-center"></div>
+        <div class="hud-ring ring-1"></div>
+        <div class="hud-ring ring-2"></div>
+        <div class="hud-ring ring-3"></div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ===== PROJECTS SECTION ===== -->
+  <section class="projects" id="projects">
+    <h2>My Projects</h2>
+    <div class="cards">
+      <!-- Cards with Vanilla Tilt Data Attributes -->
+             <div class="card" data-tilt data-tilt-max="20" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.5">
+        <a href="https://ridehub.page.gd/">
+          <h3>RideHub</h3>
+          <p>Vehicle rental website developed under OJT Project using HTML, CSS, JavaScript, and PHP/MySQL database
+            where
+            users
+            can rent vehicles at a minimum price according to their needs.
+          </p>
+        </a>
+      </div>
+
+
+
+
+      <div class="card" data-tilt data-tilt-max="20" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.5">
+        <a href="minecollector.html" style="text-decoration: none;">
+          <h3>Mine Collector</h3>
+          <p>Mine Collector is a fast-paced 2D driving game set in dangerous underground mines. Dodge obstacles,
+            avoid falling rocks, and collect coins and diamonds to score points.
+            The game gets faster and more challenging the longer you survive, testing your reflexes and focus.</p>
+        </a>
+        
+      </div>
+      <div class="card" data-tilt data-tilt-max="20" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.5">
+        <a href="https://apknow.one/VGJjsfiKHV6i2M9">  
+        <h3>Rocket Rush Meteor Escape</h3>
+          <p>A Unity-based 2D game where players collect coins,collect heart as fuel and achieve unlimited scores. Features smooth
+            2D physics and particle effects also add unity ads and some animation effects player move left and right to Dodge meteors </p>
+         </a>
+      </div>
+
+        <div class="card" data-tilt data-tilt-max="20" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.5">
+        <a href="bricksbreaker.html" style="text-decoration: none;">
+          <h3>Bricks Breaker</h3>
+          <p>classical bricks bricksbreaker game with new genration graphics play using mouse movements and fingers movements in mobile phones .</p>
+        </a>
+        
+      </div>
+      <div class="card" data-tilt data-tilt-max="20" data-tilt-speed="400" data-tilt-glare data-tilt-max-glare="0.5">
+        <a href="#">
+          <h3>Portfolio Website</h3>
+          <p>A fully responsive and animated 3D portfolio website built using HTML, CSS Glassmorphism, Vanilla JS, and
+            immersive 3D interactions.</p>
+        </a>
+      </div>
+
+    </div>
+  </section>
+  <div id="cc">
+<div id="contact">
+  <h2>Contact Me</h2>
+  <a href="mailto:tejabhalerao20@gmail.com">tejabhalerao20@gmail.com</a>
+  <a href="https://www.linkedin.com/in/tejas-bhalerao-6066b0322" >LinkedIn</a>
+</div>
+</div>
+  <footer id="ff">
+    © 2025 <a href="#">Teja Bhalerao</a>. All rights reserved.
+  </footer>
+
+
+
+
+
+
+  <!-- Vanilla Tilt JS for 3D Card Hover -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+
+  <script>
+
+    let on=false;
+    const contact=document.getElementById("contact");
+     const contactme=document.getElementById("contactme");
+
+    function toggel(){
+      console.log("button working");
+      if(on){
+      contact.classList.remove("show");
+      }else{
+        contact.classList.add("show");
+      }
+      on=!on;
+      
+    }
+
+    /* Initialize Vanilla Tilt on Cards */
+    VanillaTilt.init(document.querySelectorAll(".card"), {
+      max: 25,
+      speed: 400,
+      glare: true,
+      "max-glare": 0.4,
+    });
+
+// auto eye tracking
+
+
+ const eyes = document.querySelectorAll('.eye');
+
+    function move(){
+      // Move pupils
+      eyes.forEach(eye => {
+        const rect = eye.getBoundingClientRect();
+        // Calculate center of the eye
+        const x=6;
+        const y=6;
+        const pupil = eye.querySelector('.pupil');
+        pupil.style.transform = `translate(${x}px, ${y}px)`;
+      });
+    };
+    setInterval(move,2000);
+
+    function move2(){
+      // Move pupils
+      eyes.forEach(eye => {
+        const rect = eye.getBoundingClientRect();
+        // Calculate center of the eye
+        const x=-6;
+        const y=-6;
+        const pupil = eye.querySelector('.pupil');
+        pupil.style.transform = `translate(${x}px, ${y}px)`;
+        pupil.style.transition=`0.3s all ease-in-out`;
+      });
+    };
+    setInterval(move2,4000);
+
+      function move3(){
+      // Move pupils
+      eyes.forEach(eye => {
+        const rect = eye.getBoundingClientRect();
+        // Calculate center of the eye
+        const x=-6;
+        const y=6;
+        const pupil = eye.querySelector('.pupil');
+        pupil.style.transform = `translate(${x}px, ${y}px)`;
+        pupil.style.transition=`0.3s all ease-in-out`;
+      });
+    };
+    setInterval(move3,6000);
+
+
+
+    /* Eye Tracking Logic */
+    // const eyes = document.querySelectorAll('.eye');
+
+    document.addEventListener('mousemove', (event) => {
+      // Move pupils
+
+      eyes.forEach(eye => {
+        const rect = eye.getBoundingClientRect();
+        // Calculate center of the eye
+        const ex = rect.left + rect.width / 2;
+        const ey = rect.top + rect.height / 2;
+
+        // Calculate angle between cursor and eye
+        const angle = Math.atan2(event.clientY - ey, event.clientX - ex);
+
+        // Max distance the pupil can travel (radius of eye - radius of pupil)
+        // Eye is 40x40, Pupil is 18x18. Distance to bound is (40-18)/2 = 11px. Let's use 10px.
+        const maxDist = 10;
+
+        // Calculate distance from center to cursor, clamp to reduce extreme movement
+        const distToCursor = Math.hypot(event.clientX - ex, event.clientY - ey);
+        const distance = Math.min(distToCursor / 10, maxDist);
+
+        const x = Math.cos(angle) * distance;
+        const y = Math.sin(angle) * distance;
+
+        const pupil = eye.querySelector('.pupil');
+        pupil.style.transform = `translate(${x}px, ${y}px)`;
+        pupil.style.transition=`0.2s all ease-in-out`;
+      });
+
+      // Simple 3D parallax on Hero Cube based on mouse
+      const cube = document.getElementById('hero-cube');
+      if (cube) {
+        const x = (window.innerWidth / 2 - event.clientX) / 30;
+        const y = (window.innerHeight / 2 - event.clientY) / 30;
+        cube.style.transform = `rotateY(${-x + 15}deg) rotateX(${y + 15}deg)`;
+  
+      }
+    });
+
+ 
+   
+
+
+
+
+
+
+    /* Eye Blink Animation */
+    function blinkEyes() {
+      eyes.forEach(eye => {
+        let eyelid = eye.querySelector('.eyelid');
+        eyelid.style.height = '100%';
+        setTimeout(() => {
+          eyelid.style.height = '0';
+        }, 150);
+      });
+      // Randomize next blink to feel more natural
+      setTimeout(blinkEyes, Math.random() * 3000 + 2000);
+    }
+    setTimeout(blinkEyes, 2000);
+
+ 
+  </script>
+
+</body>
+
+</html>
